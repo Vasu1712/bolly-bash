@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-14T16:30:00.000Z",
+  "title": "Design System: Bollywood Night",
+  "extensions": {
+    "colorMeta": {
+      "rani-500": { "role": "primary", "displayName": "Rani Pink", "canonical": "#ff2d95", "tonalRamp": ["#ffc4e3", "#ff8fca", "#ff5cae", "#ff2d95", "#e1137a"] },
+      "violet-600": { "role": "primary", "displayName": "Royal Violet", "canonical": "#7c3aed", "tonalRamp": ["#ede9fe", "#c4b5fd", "#a78bfa", "#8b5cf6", "#7c3aed"] },
+      "gold-300": { "role": "secondary", "displayName": "Gold Foil", "canonical": "#ffd577", "tonalRamp": ["#fff5d9", "#ffe7a8", "#ffd577", "#ffc24a", "#f2a524"] },
+      "peacock-400": { "role": "tertiary", "displayName": "Peacock Teal", "canonical": "#2ee9d0", "tonalRamp": ["#b8fff3", "#6ff7e3", "#2ee9d0", "#14c8b2"] },
+      "ink-950": { "role": "neutral", "displayName": "Night Stage", "canonical": "#07030f", "tonalRamp": ["#07030f", "#0d0719", "#150b27", "#1f1137", "#2b1849"] },
+      "lilac-50": { "role": "neutral", "displayName": "Lilac Text", "canonical": "#fbf7ff", "tonalRamp": ["#7f6ba8", "#a690d1", "#c9b3f1", "#e3d3ff", "#f2eaff", "#fbf7ff"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The event name in gold foil, hero and ticket only." },
+      "script": { "displayName": "Script", "purpose": "The neon word \"Night\" and the gold tagline." },
+      "headline": { "displayName": "Headline", "purpose": "Card titles." },
+      "body": { "displayName": "Body", "purpose": "Descriptions and helper copy." },
+      "label": { "displayName": "Label", "purpose": "Uppercase hints, eyebrows and ticket field names." },
+      "ticket-id": { "displayName": "Ticket ID", "purpose": "Ticket IDs and codes in mono." }
+    },
+    "shadows": [
+      { "name": "card", "value": "0 40px 80px -32px rgb(0 0 0 / 0.85), inset 0 1px 0 rgb(255 255 255 / 0.07)", "purpose": "Glass cards resting on the stage." },
+      { "name": "action-glow", "value": "0 14px 40px -12px rgb(255 45 149 / 0.75)", "purpose": "Primary submit button; deepens on hover." },
+      { "name": "gold-glow", "value": "0 10px 30px -10px rgb(255 194 74 / 0.7)", "purpose": "Download button and selected chips." },
+      { "name": "ticket-lift", "value": "drop-shadow(0 28px 36px rgb(0 0 0 / 0.55)) drop-shadow(0 0 22px rgb(255 194 74 / 0.16))", "purpose": "The VIP pass only." }
+    ],
+    "motion": [
+      { "name": "ease-out-expo", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Entrances: fade-up, pop-in and toasts." },
+      { "name": "duration-ui", "value": "200ms", "purpose": "Hover, focus and border transitions." },
+      { "name": "shake", "value": "420ms ease-in-out", "purpose": "A taken character, once." },
+      { "name": "sheen", "value": "1.6s cubic-bezier(0.45, 0, 0.2, 1)", "purpose": "A single light sweep across a new pass." },
+      { "name": "twinkle", "value": "4.2s ease-in-out infinite", "purpose": "Background sparkles." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The main submit action: rani-to-violet gradient with a pink glow and hover sheen.",
+      "html": "<button class=\"ds-btn-primary\">Lock my character &amp; generate pass</button>",
+      "css": ".ds-btn-primary { height: 56px; padding: 0 24px; border: 0; border-radius: 16px; background: linear-gradient(90deg, #ff2d95, #d946ef, #7c3aed); color: #fff; font: 600 15px/1 'DM Sans', system-ui, sans-serif; cursor: pointer; box-shadow: 0 14px 40px -12px rgb(255 45 149 / 0.75); transition: transform 0.3s, box-shadow 0.3s; } .ds-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 50px -12px rgb(255 45 149 / 0.9); } .ds-btn-primary:active { transform: none; } .ds-btn-primary:focus-visible { outline: 2px solid #ffd577; outline-offset: 3px; }"
+    },
+    {
+      "name": "Gold Button",
+      "kind": "button",
+      "refersTo": "button-gold",
+      "description": "Secondary celebratory action, such as downloading the pass.",
+      "html": "<button class=\"ds-btn-gold\">Download pass (PNG)</button>",
+      "css": ".ds-btn-gold { height: 48px; padding: 0 20px; border: 0; border-radius: 16px; background: linear-gradient(90deg, #ffd577, #f2a524); color: #07030f; font: 700 14px/1 'DM Sans', system-ui, sans-serif; cursor: pointer; box-shadow: 0 10px 30px -10px rgb(255 194 74 / 0.7); transition: transform 0.2s, box-shadow 0.2s; } .ds-btn-gold:hover { transform: translateY(-2px); box-shadow: 0 16px 36px -10px rgb(255 194 74 / 0.85); } .ds-btn-gold:focus-visible { outline: 2px solid #ffd577; outline-offset: 3px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Form field with a gold focus ring; takes emerald or rose when the character is available or taken.",
+      "html": "<input class=\"ds-input\" placeholder=\"e.g. Rohan Verma\" />",
+      "css": ".ds-input { box-sizing: border-box; height: 48px; width: 100%; padding: 0 16px; border: 1px solid rgb(255 255 255 / 0.1); border-radius: 16px; background: rgb(7 3 15 / 0.55); color: #fff; font: 400 16px 'DM Sans', system-ui, sans-serif; outline: none; transition: border-color 0.2s, box-shadow 0.2s; } .ds-input::placeholder { color: rgb(127 107 168 / 0.8); } .ds-input:hover { border-color: rgb(255 255 255 / 0.2); } .ds-input:focus { border-color: rgb(255 213 119 / 0.6); box-shadow: 0 0 0 4px rgb(255 213 119 / 0.1); }"
+    },
+    {
+      "name": "Idea Chip",
+      "kind": "chip",
+      "refersTo": "chip-idea",
+      "description": "Quick-pick character suggestion; fills the form when tapped.",
+      "html": "<button class=\"ds-chip\">Geet Dhillon</button>",
+      "css": ".ds-chip { padding: 6px 12px; border: 0; border-radius: 9999px; background: rgb(255 255 255 / 0.04); color: #fff5d9; font: 500 12px 'DM Sans', system-ui, sans-serif; cursor: pointer; box-shadow: inset 0 0 0 1px rgb(255 213 119 / 0.25); transition: transform 0.2s, background 0.2s, box-shadow 0.2s; } .ds-chip:hover { transform: translateY(-2px); background: rgb(255 213 119 / 0.1); box-shadow: inset 0 0 0 1px rgb(255 213 119 / 0.5); } .ds-chip:focus-visible { outline: 2px solid #ffd577; outline-offset: 3px; }"
+    },
+    {
+      "name": "Mode Tab",
+      "kind": "nav",
+      "refersTo": "tab-active",
+      "description": "Pill tab bar with a gradient active state and a live count badge.",
+      "html": "<div class=\"ds-tabs\"><button class=\"ds-tab is-active\">Get your pass</button><button class=\"ds-tab\">Find my pass <span class=\"ds-count\">3</span></button></div>",
+      "css": ".ds-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 6px; border-radius: 9999px; background: rgb(13 7 25 / 0.75); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1); } .ds-tab { display: flex; align-items: center; justify-content: center; gap: 8px; height: 44px; border: 0; border-radius: 9999px; background: transparent; color: #c9b3f1; font: 600 14px 'DM Sans', system-ui, sans-serif; cursor: pointer; transition: background 0.3s, color 0.3s; } .ds-tab:hover { background: rgb(255 255 255 / 0.05); color: #fff; } .ds-tab.is-active { background: linear-gradient(90deg, #ff2d95, #7c3aed); color: #fff; box-shadow: 0 8px 24px -8px rgb(255 45 149 / 0.85); } .ds-count { min-width: 24px; padding: 2px 6px; border-radius: 9999px; background: rgb(46 233 208 / 0.15); color: #6ff7e3; font-size: 11px; font-weight: 700; }"
+    },
+    {
+      "name": "Glass Card",
+      "kind": "card",
+      "refersTo": "glass-card",
+      "description": "The standard container: frosted plum glass with a gold-to-pink hairline across the top edge.",
+      "html": "<section class=\"ds-card\"><h2 class=\"ds-card-title\">Lock your character &amp; entry pass</h2><p class=\"ds-card-copy\">Claim your iconic Bollywood persona to generate your official VIP party pass.</p></section>",
+      "css": ".ds-card { position: relative; padding: 28px; border-radius: 28px; border: 1px solid rgb(255 255 255 / 0.08); background: linear-gradient(180deg, rgb(35 19 62 / 0.68), rgb(17 9 33 / 0.78)); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.07), 0 40px 80px -32px rgb(0 0 0 / 0.85); color: #fbf7ff; font-family: 'DM Sans', system-ui, sans-serif; } .ds-card::before { content: ''; position: absolute; top: 0; left: 8%; right: 8%; height: 1px; background: linear-gradient(90deg, transparent, rgb(255 213 119 / 0.7), rgb(255 92 174 / 0.7), transparent); } .ds-card-title { margin: 0; font-size: 20px; font-weight: 600; letter-spacing: -0.01em; } .ds-card-copy { margin: 4px 0 0; font-size: 14px; line-height: 1.6; color: #c9b3f1; }"
+    },
+    {
+      "name": "Character Row",
+      "kind": "custom",
+      "refersTo": "glass-card",
+      "description": "A roster or lookup tile: monogram avatar, character, film and claimant, with a rose Taken pill.",
+      "html": "<div class=\"ds-row\"><span class=\"ds-avatar\">GD</span><div class=\"ds-row-body\"><p class=\"ds-row-char\">Geet Dhillon</p><p class=\"ds-row-movie\">Jab We Met</p><p class=\"ds-row-meta\">Claimed by Rohan Verma</p></div><span class=\"ds-taken\">Taken</span></div>",
+      "css": ".ds-row { display: flex; align-items: center; gap: 14px; padding: 12px; border-radius: 16px; border: 1px solid rgb(255 255 255 / 0.07); background: rgb(255 255 255 / 0.025); font-family: 'DM Sans', system-ui, sans-serif; transition: border-color 0.2s, background 0.2s; } .ds-row:hover { border-color: rgb(46 233 208 / 0.3); background: rgb(255 255 255 / 0.045); } .ds-avatar { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, rgb(255 45 149 / 0.35), rgb(124 58 237 / 0.25)); color: #ffc4e3; font: 400 18px 'Rozha One', Georgia, serif; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1); } .ds-row-body { flex: 1; min-width: 0; } .ds-row-body p { margin: 0; } .ds-row-char { font-weight: 600; color: #b8fff3; } .ds-row-movie { font-size: 13px; color: rgb(255 231 168 / 0.9); } .ds-row-meta { margin-top: 2px; font-size: 12px; color: #a690d1; } .ds-taken { padding: 4px 10px; border-radius: 9999px; background: rgb(244 63 94 / 0.1); color: #fda4af; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; box-shadow: inset 0 0 0 1px rgb(251 113 133 / 0.3); }"
+    },
+    {
+      "name": "Availability Message",
+      "kind": "custom",
+      "refersTo": "input",
+      "description": "Live status under the character field: emerald when available, rose when taken.",
+      "html": "<p class=\"ds-status ds-status-ok\"><strong>“Geet” is available!</strong> Lock it in now for full main character energy.</p>",
+      "css": ".ds-status { margin: 10px 0 0; padding: 12px 14px; border-radius: 12px; font: 400 13px/1.6 'DM Sans', system-ui, sans-serif; } .ds-status strong { color: #fff; font-weight: 600; } .ds-status-ok { background: rgb(52 211 153 / 0.1); color: #d1fae5; box-shadow: inset 0 0 0 1px rgb(52 211 153 / 0.3); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Midnight Premiere",
+    "overview": "A film premiere after dark: the stage is a deep plum night sky, swept by pink and teal spotlights, with a disco ball catching the light in each top corner. The event name is struck in gold foil like a title card, the word \"Night\" glows as a neon sign, and the guest's pass is the golden ticket that closes the story. The page should feel as though the party has already started.\n\nThe mood is glamorous, playful and celebratory. It is generous rather than precise: large rounded controls, candy gradients, soft glows, and sparkle. The one confirmed visual rejection is the generic SaaS or corporate-event look.",
+    "keyCharacteristics": [
+      "Dark plum night sky lit by colored light, never a flat black or white field.",
+      "Gold foil display lettering with a script neon accent; sans-serif everywhere else.",
+      "Glass cards, glossy gradient buttons, and pill-shaped chips and tabs.",
+      "Depth from glow and blur; one hard drop shadow, reserved for the ticket.",
+      "The ticket is the loudest object on the page by design."
+    ],
+    "rules": [
+      { "name": "The Foil Rule", "body": "Gold foil gradient text is reserved for the event title and the ticket's title and \"VIP\" mark. If everything is gold, nothing is.", "section": "colors" },
+      { "name": "The One Neon Rule", "body": "Only one word on the page, \"Night\", carries the multi-layer neon glow. Every other glow is a soft colored shadow.", "section": "colors" },
+      { "name": "The Meaning Rule", "body": "Pink acts, gold celebrates, teal confirms, rose rejects. A color never changes its job between screens.", "section": "colors" },
+      { "name": "The Two Display Voices Rule", "body": "Serif display and script each appear once in the hero and once on the ticket. Everything functional is DM Sans.", "section": "typography" },
+      { "name": "The Light-Not-Shadow Rule", "body": "Elevation is a colored glow or blur. Hard drop shadows are only for the ticket, so it reads as the one physical object in a world of light.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep the page phone first: controls at least 44px tall, 16px input text, one column, thumb-reachable primary action.",
+      "Do reserve gold foil for the event title and the ticket, and give \"Night\" the only neon glow.",
+      "Do let color carry meaning: pink acts, gold celebrates, teal confirms, rose rejects.",
+      "Do make the ticket the loudest object on the page, with the only hard drop shadow.",
+      "Do build depth from colored light and blur, and keep cards glass over the lit backdrop.",
+      "Do keep copy warm and filmy, but state errors plainly with who claimed the character and what to do next.",
+      "Do respect reduced motion: every animation collapses to an instant state."
+    ],
+    "donts": [
+      "Don't drift toward a generic SaaS or corporate-event look: no flat white surfaces, plain form chrome, or default ticketing-platform styling.",
+      "Don't stack decorative effects on functional content; sparkles, props, and spotlights stay behind the cards and never intercept pointer events.",
+      "Don't use gold text, neon glow, or the display serif for ordinary UI copy.",
+      "Don't claim anything the demo cannot keep, such as a shared live roster across devices or real ticketing.",
+      "Don't use hard drop shadows on cards, buttons, or chips.",
+      "Don't change a status color's meaning; rose is never decorative and emerald is never an accent."
+    ]
+  }
+}
