@@ -7,12 +7,14 @@ import { Card, CardHeader, CharacterAvatar, EmptyState, ListSkeleton, SearchFiel
 export function LookupCard({
   passes,
   ready,
+  failed,
   query,
   onQueryChange,
   onView,
 }: {
   passes: readonly Pass[];
   ready: boolean;
+  failed: boolean;
   query: string;
   onQueryChange: (query: string) => void;
   onView: (ticketId: string) => void;
@@ -43,7 +45,9 @@ export function LookupCard({
       </div>
 
       <div className="mt-4">
-        {!ready ? (
+        {!ready && failed ? (
+          <EmptyState icon={SearchX}>Couldn’t load the guest list. Retrying…</EmptyState>
+        ) : !ready ? (
           <ListSkeleton />
         ) : matches.length ? (
           <ul className="scrollbar-thin max-h-[30rem] space-y-2 overflow-y-auto pr-1">

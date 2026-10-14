@@ -13,8 +13,6 @@ export const EVENT = {
   time: "8 PM onwards",
   perks: ["Drinks", "Food", "Games", "Pictures", "Music"],
   ticketPrefix: "VS-16OCT",
-  // Same key as the original HTML version, so existing registrations carry over.
-  storageKey: "vaswani_bollywood_night_passes_v1",
 } as const;
 
 export type Perk = (typeof EVENT.perks)[number];

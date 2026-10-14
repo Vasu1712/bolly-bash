@@ -1,129 +1,122 @@
 import { useSyncExternalStore } from "react";
-import { findClaim, indexClaims } from "./characters";
-import { EVENT } from "./event";
-import { createTicketId, type Pass, type PassDraft } from "./passes";
+import { claimPass } from "@/app/actions";
+import type { ClaimOutcome, Pass, PassDraft } from "./passes";
 
-const STORAGE_KEY = EVENT.storageKey;
+// The shared guest list lives in the database. This store keeps a client copy
+// fresh (poll, tab focus, reconnect) so the live checks and chips reflect
+// claims made on other devices. The server has the final say on every claim.
+
+type PassState = {
+  passes: readonly Pass[];
+  /** The list has loaded at least once. */
+  ready: boolean;
+  /** The last refresh failed; the list may be stale. */
+  failed: boolean;
+};
+
+const POLL_MS = 8000;
 const NO_PASSES: readonly Pass[] = [];
+const SERVER_STATE: PassState = { passes: NO_PASSES, ready: false, failed: false };
 
-let cachedRaw: string | null = null;
-let cachedPasses: readonly Pass[] = NO_PASSES;
-// Set when localStorage refuses writes (blocked or full); passes then live in memory.
-let memoryOnly = false;
+let state = SERVER_STATE;
+// Bumped by every local change so a slower, older refresh cannot overwrite it.
+let epoch = 0;
 const listeners = new Set<() => void>();
 
-function toPass(value: unknown): Pass | null {
-  if (!value || typeof value !== "object") return null;
-  const { ticketId, guestName, character, movie, claimedAt } = value as Record<string, unknown>;
-  if (
-    typeof ticketId !== "string" ||
-    typeof guestName !== "string" ||
-    typeof character !== "string" ||
-    typeof movie !== "string"
-  ) {
-    return null;
-  }
-  return { ticketId, guestName, character, movie, claimedAt: typeof claimedAt === "string" ? claimedAt : "" };
-}
-
-function parse(raw: string | null): readonly Pass[] {
-  if (!raw) return NO_PASSES;
-  try {
-    const data: unknown = JSON.parse(raw);
-    if (!Array.isArray(data)) return NO_PASSES;
-    return data.map(toPass).filter((pass): pass is Pass => pass !== null);
-  } catch {
-    return NO_PASSES;
-  }
-}
-
-/** Re-reads storage; returns true when another tab changed it since the last read. */
-function syncFromStorage() {
-  if (memoryOnly) return false;
-  let raw: string | null = null;
-  try {
-    raw = window.localStorage.getItem(STORAGE_KEY);
-  } catch {
-    // Storage blocked: behave like an empty list.
-  }
-  if (raw === cachedRaw) return false;
-  cachedRaw = raw;
-  cachedPasses = parse(raw);
-  return true;
-}
-
-function emit() {
+function setState(next: PassState) {
+  state = next;
   listeners.forEach((listener) => listener());
 }
 
-function getSnapshot() {
-  syncFromStorage();
-  return cachedPasses;
+function isPass(value: unknown): value is Pass {
+  const pass = value as Record<string, unknown> | null;
+  return (
+    !!pass &&
+    typeof pass.ticketId === "string" &&
+    typeof pass.guestName === "string" &&
+    typeof pass.character === "string" &&
+    typeof pass.movie === "string" &&
+    typeof pass.claimedAt === "string"
+  );
 }
 
-function getServerSnapshot() {
-  return NO_PASSES;
+function samePasses(a: readonly Pass[], b: readonly Pass[]) {
+  return a.length === b.length && a.every((pass, i) => pass.ticketId === b[i].ticketId);
+}
+
+async function refresh() {
+  const started = epoch;
+  try {
+    const response = await fetch("/api/passes", { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data: unknown = await response.json();
+    if (!Array.isArray(data)) throw new Error("Unexpected response");
+    if (started !== epoch) return;
+    const passes = data.filter(isPass);
+    if (state.ready && !state.failed && samePasses(passes, state.passes)) return;
+    setState({ passes: samePasses(passes, state.passes) ? state.passes : passes, ready: true, failed: false });
+  } catch {
+    if (!state.failed) setState({ ...state, failed: true });
+  }
+}
+
+let stopSync: (() => void) | undefined;
+
+function startSync() {
+  void refresh();
+  const poll = window.setInterval(() => {
+    if (document.visibilityState === "visible") void refresh();
+  }, POLL_MS);
+  const wake = () => {
+    if (document.visibilityState === "visible") void refresh();
+  };
+  document.addEventListener("visibilitychange", wake);
+  window.addEventListener("focus", wake);
+  window.addEventListener("online", wake);
+  stopSync = () => {
+    window.clearInterval(poll);
+    document.removeEventListener("visibilitychange", wake);
+    window.removeEventListener("focus", wake);
+    window.removeEventListener("online", wake);
+  };
 }
 
 function subscribe(onChange: () => void) {
   listeners.add(onChange);
-  // Fires when another tab writes, so every open tab's roster stays live.
-  const onStorage = (event: StorageEvent) => {
-    if (event.key === STORAGE_KEY || event.key === null) onChange();
-  };
-  window.addEventListener("storage", onStorage);
+  if (listeners.size === 1) startSync();
   return () => {
     listeners.delete(onChange);
-    window.removeEventListener("storage", onStorage);
+    if (listeners.size === 0) {
+      stopSync?.();
+      stopSync = undefined;
+    }
   };
 }
 
-function commit(next: readonly Pass[]) {
-  const raw = next.length ? JSON.stringify(next) : null;
+/** The shared guest list. Empty and not ready during prerender and hydration. */
+export function usePassStore() {
+  return useSyncExternalStore(subscribe, () => state, () => SERVER_STATE);
+}
+
+/** Adds passes we just learned about without waiting for the next refresh. */
+function remember(...incoming: Pass[]) {
+  epoch++;
+  const known = new Set(incoming.map((pass) => pass.ticketId));
+  setState({
+    passes: [...incoming, ...state.passes.filter((pass) => !known.has(pass.ticketId))],
+    ready: true,
+    failed: false,
+  });
+}
+
+/** Asks the server to lock the character. Only one guest can ever win a given one. */
+export async function claimCharacter(draft: PassDraft): Promise<ClaimOutcome> {
   try {
-    if (raw) window.localStorage.setItem(STORAGE_KEY, raw);
-    else window.localStorage.removeItem(STORAGE_KEY);
+    const outcome = await claimPass(draft);
+    if (outcome.ok) remember(outcome.pass);
+    else if (outcome.reason === "taken") remember(outcome.existing);
+    return outcome;
   } catch {
-    memoryOnly = true;
+    return { ok: false, reason: "error" };
   }
-  cachedRaw = raw;
-  cachedPasses = next;
-  emit();
-}
-
-/** Every registered pass, newest first. Empty during prerender and hydration. */
-export function usePasses() {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-}
-
-const noopSubscribe = () => () => {};
-
-/** False during prerender and hydration, true once the browser has taken over. */
-export function useHydrated() {
-  return useSyncExternalStore(
-    noopSubscribe,
-    () => true,
-    () => false,
-  );
-}
-
-export type ClaimResult = { ok: true; pass: Pass } | { ok: false; existing: Pass };
-
-/** Enforces the one-character rule against the freshest saved list, then saves the pass. */
-export function claimCharacter(draft: PassDraft): ClaimResult {
-  if (syncFromStorage()) emit();
-  const passes = cachedPasses;
-
-  const existing = findClaim(indexClaims(passes), draft.character);
-  if (existing) return { ok: false, existing };
-
-  const pass: Pass = {
-    ticketId: createTicketId(draft.character, new Set(passes.map((p) => p.ticketId))),
-    guestName: draft.guestName,
-    character: draft.character,
-    movie: draft.movie,
-    claimedAt: new Date().toISOString(),
-  };
-  commit([pass, ...passes]);
-  return { ok: true, pass };
 }

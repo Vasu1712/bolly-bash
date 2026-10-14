@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useHydrated, usePasses } from "@/lib/pass-store";
+import { usePassStore } from "@/lib/pass-store";
 import { EMPTY_DRAFT, type Pass, type PassDraft } from "@/lib/passes";
 import { LookupCard } from "./lookup-card";
 import { ModeTabs, PANEL_ID, type Tab } from "./mode-tabs";
@@ -11,8 +11,7 @@ import { VipPass } from "./vip-pass";
 
 /** Registration, pass display and lookup. */
 export function PassApp() {
-  const passes = usePasses();
-  const ready = useHydrated();
+  const { passes, ready, failed } = usePassStore();
   const { toast, notify } = useToast();
 
   const [tab, setTab] = useState<Tab>("register");
@@ -70,6 +69,7 @@ export function PassApp() {
             <LookupCard
               passes={passes}
               ready={ready}
+              failed={failed}
               query={lookupQuery}
               onQueryChange={setLookupQuery}
               onView={setOpenTicketId}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Ban, CircleCheck, CircleX, Clapperboard, Lock, Sparkles, Ticket, Zap } from "lucide-react";
+import { Ban, CircleCheck, CircleX, Clapperboard, LoaderCircle, Lock, Sparkles, Ticket, WifiOff, Zap } from "lucide-react";
 import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { characterKey, findClaim, indexClaims, POPULAR_CHARACTERS, type CharacterPreset } from "@/lib/characters";
 import { cn } from "@/lib/cn";
@@ -36,6 +36,8 @@ export function RegistrationCard({
   // Counts rejected submits; it also re-keys the alert so the shake replays.
   const [rejections, setRejections] = useState(0);
   const [showAllIdeas, setShowAllIdeas] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [connectionError, setConnectionError] = useState(false);
   const guestNameRef = useRef<HTMLInputElement>(null);
   const characterRef = useRef<HTMLInputElement>(null);
   const movieRef = useRef<HTMLInputElement>(null);
@@ -59,8 +61,9 @@ export function RegistrationCard({
     setRejections(0);
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (submitting) return;
     const values: PassDraft = {
       guestName: draft.guestName.trim(),
       character: draft.character.trim(),
@@ -74,16 +77,31 @@ export function RegistrationCard({
       return;
     }
 
-    // Enforce the one-character rule.
-    const result = claimCharacter(values);
-    if (!result.ok) {
-      setRejections((count) => count + 1);
+    if (!characterKey(values.character)) {
+      setErrors({ character: "Use letters or numbers in the character name." });
       characterRef.current?.focus();
       return;
     }
-    setErrors({});
-    setRejections(0);
-    onClaimed(result.pass);
+
+    // The shared database enforces the one-character rule, even against a
+    // guest on another device claiming it at the same moment.
+    setSubmitting(true);
+    setConnectionError(false);
+    const result = await claimCharacter(values);
+    setSubmitting(false);
+
+    if (result.ok) {
+      setErrors({});
+      setRejections(0);
+      onClaimed(result.pass);
+    } else if (result.reason === "taken") {
+      setRejections((count) => count + 1);
+      characterRef.current?.focus();
+    } else if (result.reason === "invalid") {
+      setErrors({ character: "Check your details and try again." });
+    } else {
+      setConnectionError(true);
+    }
   }
 
   return (
@@ -101,6 +119,19 @@ export function RegistrationCard({
           claim the same Bollywood character. Once locked, that character is off the market!
         </p>
       </div>
+
+      {connectionError && (
+        <div
+          role="alert"
+          className="mt-5 flex gap-3 rounded-2xl border border-rose-400/45 bg-rose-500/10 p-4 text-sm leading-relaxed text-rose-100/90"
+        >
+          <WifiOff aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-rose-300" />
+          <p>
+            <strong className="text-white">We couldn’t reach the guest list.</strong> Check your connection and tap
+            the button again. Your character isn’t locked yet.
+          </p>
+        </div>
+      )}
 
       {rejections > 0 && claim && (
         <div
@@ -254,14 +285,20 @@ export function RegistrationCard({
 
         <button
           type="submit"
-          className="group relative flex h-14 w-full items-center justify-center gap-2.5 overflow-hidden rounded-2xl bg-rani-500 px-4 text-[15px] font-semibold text-white shadow-[0_14px_40px_-12px_rgb(255_45_149/0.75)] transition duration-300 hover:-translate-y-0.5 hover:bg-rani-400 hover:shadow-[0_20px_50px_-12px_rgb(255_45_149/0.9)] active:translate-y-0"
+          disabled={submitting}
+          aria-busy={submitting}
+          className="group relative flex h-14 w-full items-center justify-center gap-2.5 overflow-hidden rounded-2xl bg-rani-500 px-4 text-[15px] font-semibold text-white shadow-[0_14px_40px_-12px_rgb(255_45_149/0.75)] transition duration-300 hover:-translate-y-0.5 hover:bg-rani-400 hover:shadow-[0_20px_50px_-12px_rgb(255_45_149/0.9)] active:translate-y-0 disabled:translate-y-0 disabled:cursor-wait disabled:opacity-80"
         >
           <span
             aria-hidden="true"
             className="absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-linear-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-[400%]"
           />
-          <Ticket aria-hidden="true" className="size-5 shrink-0" />
-          Lock character & generate pass
+          {submitting ? (
+            <LoaderCircle aria-hidden="true" className="size-5 shrink-0 animate-spin" />
+          ) : (
+            <Ticket aria-hidden="true" className="size-5 shrink-0" />
+          )}
+          {submitting ? "Locking your character…" : "Lock character & generate pass"}
         </button>
       </form>
     </Card>

@@ -255,6 +255,6 @@ Lookup rows are rounded 16px tiles with a monogram avatar in one of four tinted 
 - **Don't** drift toward a generic SaaS or corporate-event look: no flat white surfaces, plain form chrome, or default ticketing-platform styling.
 - **Don't** stack decorative effects on functional content; sparkles, props, and spotlights stay behind the cards and never intercept pointer events.
 - **Don't** use gold text, neon glow, or the display serif for ordinary UI copy.
-- **Don't** claim anything the demo cannot keep, such as a shared live roster across devices or real ticketing.
+- **Don't** claim anything the product cannot keep, such as real ticketing or verified guest identity.
 - **Don't** use hard drop shadows on cards, buttons, or chips.
 - **Don't** change a status color's meaning; rose is never decorative and emerald is never an accent.

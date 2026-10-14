@@ -5,7 +5,7 @@ export type Pass = {
   guestName: string;
   character: string;
   movie: string;
-  /** ISO timestamp. Passes saved by the original HTML page hold a display time instead. */
+  /** ISO timestamp. */
   claimedAt: string;
 };
 
@@ -19,15 +19,15 @@ export const FIELD_LIMITS: Record<keyof PassDraft, number> = {
   movie: 80,
 };
 
-export function createTicketId(character: string, takenIds: ReadonlySet<string>) {
+export type ClaimOutcome =
+  | { ok: true; pass: Pass }
+  | { ok: false; reason: "taken"; existing: Pass }
+  | { ok: false; reason: "invalid" | "error" };
+
+export function createTicketId(character: string, digits = 4) {
   const initials = (character.replace(/[^a-zA-Z]/g, "").slice(0, 2) || "BN").toUpperCase();
-  for (let attempt = 0; ; attempt++) {
-    // Four digits like the original; widen if a guest list ever gets crowded.
-    const digits = attempt < 25 ? 4 : 6;
-    const number = 10 ** (digits - 1) + Math.floor(Math.random() * 9 * 10 ** (digits - 1));
-    const id = `${EVENT.ticketPrefix}-${initials}${number}`;
-    if (!takenIds.has(id)) return id;
-  }
+  const number = 10 ** (digits - 1) + Math.floor(Math.random() * 9 * 10 ** (digits - 1));
+  return `${EVENT.ticketPrefix}-${initials}${number}`;
 }
 
 export function downloadBlob(blob: Blob, filename: string) {

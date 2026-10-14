@@ -29,7 +29,7 @@ Guests arrive via a link shared informally, usually on a phone, and complete the
 - Generated VIP pass with ticket ID (format VS-16OCT-XX0000), downloadable as a PNG.
 - Lookup of an existing pass by ticket ID, guest name or character.
 - The public 'Taken characters' roster, CSV export and demo reset were deliberately removed by the owner; guests learn a character is taken from the live check, the struck-through chips and the rejection alert.
-- Data currently lives in each browser's localStorage (key `vaswani_bollywood_night_passes_v1`) and syncs across tabs on one device only. This is a demo: there is no shared backend, so the one-character rule does not hold across different guests' devices. A shared backend is undecided and out of scope for now.
+- Passes live in a shared Turso (libSQL) database, so the one-character rule holds across every guest's device. The `passes` table has a UNIQUE `character_key` (the normalised character, aliases folded), so the database rejects a second claim even when two guests submit at the same instant. The client refreshes the list every 8 seconds and on tab focus; the server decides every claim. Config: `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`; in development without them it uses a local `local.db` file.
 - Event details (name, date, time, perks) are fixed copy in `src/lib/event.ts`.
 - Next.js 16 App Router, TypeScript, Tailwind v4, lucide-react icons.
 
@@ -47,7 +47,7 @@ The original single-file page `bollywood_night_party_pass.html` is the source of
 - Phone first: a guest should finish claiming a character in under a minute with one thumb.
 - The pass is the payoff: it should be good enough to screenshot and share.
 - Copy stays warm and filmy, but errors and states must be clear.
-- Never imply guarantees the demo cannot keep (shared roster, real ticketing).
+- Never imply guarantees the product cannot keep (real ticketing, identity checks; guests are not authenticated).
 
 ## Accessibility & Inclusion
 
