@@ -126,7 +126,7 @@ The mood is glamorous, playful and celebratory. It is generous rather than preci
 **Key Characteristics:**
 - Dark plum night sky lit by colored light, never a flat black or white field.
 - Gold foil display lettering with a script neon accent; sans-serif everywhere else.
-- Glass cards, flat rani-pink buttons, and pill-shaped chips and tabs.
+- Glass cards, flat rani-pink buttons, and pill-shaped chips.
 - Depth from glow and blur; one hard drop shadow, reserved for the ticket.
 - The ticket is the loudest object on the page by design.
 
@@ -142,7 +142,7 @@ A night-sky plum base with three jewel accents: rani pink for action, gold for c
 - **Gold Foil** (#ffd577, with #ffe7a8 highlight and #f2a524 shadow): celebration and value. Display lettering, the VIP badge, selected chips, the download button, ticket borders, and focus rings.
 
 ### Tertiary
-- **Peacock Teal** (#2ee9d0, with #6ff7e3 for text): liveness and approval. The "live uniqueness check" cue, claimed character names, the active-tab count badge, and the teal spotlight.
+- **Peacock Teal** (#2ee9d0, with #6ff7e3 for text): liveness and approval. The "live uniqueness check" cue, claimed character names and the teal prop icon.
 
 ### Neutral
 - **Night Stage** (#07030f to #2b1849): the ink scale. #07030f is the page and input background; #0d0719 and #150b27 are card and chip surfaces; #1f1137 and #2b1849 appear mainly in gradients.
@@ -178,7 +178,7 @@ A night-sky plum base with three jewel accents: rani pink for action, gold for c
 
 ## Layout
 
-A single centered column of up to 72rem (max-w-6xl) with 16px side gutters on phones and 24px from the small breakpoint up. The hero is a centered poster stack; below it a pill tab bar (max 36rem) sits above a single centered panel (max-w-2xl, 42rem) holding the form, the pass, or the lookup results. On phones tab labels shorten ("Get your pass", "Find my pass").
+A single centered column of up to 72rem (max-w-6xl) with 16px side gutters on phones and 24px from the small breakpoint up. The hero is a centered poster stack; below it a single centered panel (max-w-2xl, 42rem) holds the registration form, then the pass once claimed.
 
 Cards use 20px padding on phones and 28px from the small breakpoint. Vertical rhythm is generous: form fields are 20px apart, the hero sections 20px to 36px apart. The page is phone first: every control is at least 44px tall, and the primary action is 56px.
 
@@ -230,14 +230,8 @@ Borders are hairlines (1px at 8% to 10% white) except on the ticket, which has a
 - **Success / Error:** the border and ring take emerald or rose; an error also tints the fill. Live status appears below the field as a tinted message with an icon, and a taken character shakes once.
 - **Labels:** semibold 13px above the field with a pink asterisk, and a small uppercase hint on the right that sets the field's accent color.
 
-### Navigation
-A pill tab bar on a dark translucent track with a hairline ring. The active tab is flat rani pink with a pink glow; inactive tabs are lilac text with a faint hover fill. The second tab carries a live count badge. Arrow keys move between tabs.
-
 ### The VIP Pass (signature component)
 A two-part ticket: a flat plum body with a flat rani-pink header band carrying the presenter and a gold "Main character VIP" badge, over a darker stub with the ticket ID in mono, a deterministic gold barcode derived from the ID, and a green "Character exclusively reserved" confirmation. It enters with a pop-in and a single sheen sweep. The same design is redrawn on canvas at 2x for the downloadable PNG, using the same fonts.
-
-### Lists
-Lookup rows are rounded 16px tiles with a monogram avatar in one of four tinted gradients, a teal character name, a gold movie line, and a muted lilac meta line.
 
 ## Do's and Don'ts
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, BadgeCheck, CalendarDays, Clock, Download, LoaderCircle, Martini, Star, UserPlus } from "lucide-react";
+import { BadgeCheck, CalendarDays, Clock, Download, LoaderCircle, Martini, Star, UserPlus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { EVENT, EVENT_DATE } from "@/lib/event";
 import { renderPassImage } from "@/lib/pass-image";
@@ -11,13 +11,10 @@ import type { Notify } from "./toast";
 export function VipPass({
   pass,
   onRegisterAnother,
-  onBack,
   notify,
 }: {
   pass: Pass;
   onRegisterAnother: () => void;
-  /** Shown when the pass was opened from search results. */
-  onBack?: () => void;
   notify: Notify;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -151,17 +148,6 @@ export function VipPass({
           Register another guest
         </button>
       </div>
-
-      {onBack && (
-        <button
-          type="button"
-          onClick={onBack}
-          className="mx-auto mt-4 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-lilac-300 transition hover:text-white"
-        >
-          <ArrowLeft aria-hidden="true" className="size-4" />
-          Back to search results
-        </button>
-      )}
     </div>
   );
 }

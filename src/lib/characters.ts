@@ -9,7 +9,7 @@ export type CharacterPreset = {
 // like "Poo", "Pooja" and "Poo (Pooja)" all count as the same character.
 export const POPULAR_CHARACTERS: readonly CharacterPreset[] = [
   { name: "Poo", movie: "Kabhi Khushi Kabhie Gham", aliases: ["poo", "pooja", "pooja sharma", "poo pooja"] },
-  { name: "Geet Dhillon", movie: "Jab We Met", aliases: ["geet", "geet dhillon"] },
+  { name: "Geet", movie: "Jab We Met", aliases: ["geet", "geet dhillon"] },
   { name: "Raj Malhotra", movie: "Dilwale Dulhania Le Jayenge", aliases: ["raj", "raj malhotra"] },
   { name: "Chulbul Pandey", movie: "Dabangg", aliases: ["chulbul pandey", "robinhood pandey", "chulbul"] },
   { name: "Baburao Ganpatrao Apte", movie: "Hera Pheri", aliases: ["baburao", "babu bhaiya", "baburao ganpatrao apte", "babubhaiya"] },

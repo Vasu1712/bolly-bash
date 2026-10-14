@@ -3,32 +3,21 @@
 import { useState } from "react";
 import { usePassStore } from "@/lib/pass-store";
 import { EMPTY_DRAFT, type Pass, type PassDraft } from "@/lib/passes";
-import { LookupCard } from "./lookup-card";
-import { ModeTabs, PANEL_ID, type Tab } from "./mode-tabs";
 import { RegistrationCard } from "./registration-card";
 import { Toast, useToast } from "./toast";
 import { VipPass } from "./vip-pass";
 
-/** Registration, pass display and lookup. */
+/** Registration, then the guest's pass. */
 export function PassApp() {
-  const { passes, ready, failed } = usePassStore();
+  const { passes } = usePassStore();
   const { toast, notify } = useToast();
 
-  const [tab, setTab] = useState<Tab>("register");
   const [openTicketId, setOpenTicketId] = useState<string | null>(null);
-  // Kept here so a half-filled form survives switching tabs.
+  // Kept here so a half-filled form survives while the pass is open.
   const [draft, setDraft] = useState<PassDraft>(EMPTY_DRAFT);
-  const [lookupQuery, setLookupQuery] = useState("");
   const [focusForm, setFocusForm] = useState(false);
 
-  // Derived from the live list, so a pass removed in another tab closes here too.
   const openPass = openTicketId ? passes.find((pass) => pass.ticketId === openTicketId) : undefined;
-
-  function switchTab(next: Tab) {
-    setTab(next);
-    setOpenTicketId(null);
-    setFocusForm(false);
-  }
 
   function handleClaimed(pass: Pass) {
     setDraft(EMPTY_DRAFT);
@@ -38,45 +27,23 @@ export function PassApp() {
 
   function registerAnother() {
     setDraft(EMPTY_DRAFT);
-    setTab("register");
     setOpenTicketId(null);
     setFocusForm(true);
   }
 
   return (
-    <section aria-label="Party passes" className="mt-12 sm:mt-16">
-      <ModeTabs active={tab} count={ready ? passes.length : null} onChange={switchTab} />
-
-      <div className="mx-auto mt-8 max-w-2xl">
-        <div role="tabpanel" id={PANEL_ID} aria-labelledby={`tab-${tab}`} className="min-w-0">
-          {openPass ? (
-            <VipPass
-              key={openPass.ticketId}
-              pass={openPass}
-              onRegisterAnother={registerAnother}
-              onBack={tab === "lookup" ? () => setOpenTicketId(null) : undefined}
-              notify={notify}
-            />
-          ) : tab === "register" ? (
-            <RegistrationCard
-              passes={passes}
-              draft={draft}
-              onDraftChange={setDraft}
-              onClaimed={handleClaimed}
-              autoFocus={focusForm}
-            />
-          ) : (
-            <LookupCard
-              passes={passes}
-              ready={ready}
-              failed={failed}
-              query={lookupQuery}
-              onQueryChange={setLookupQuery}
-              onView={setOpenTicketId}
-            />
-          )}
-        </div>
-      </div>
+    <section aria-label="Party pass" className="mx-auto mt-12 max-w-2xl sm:mt-16">
+      {openPass ? (
+        <VipPass key={openPass.ticketId} pass={openPass} onRegisterAnother={registerAnother} notify={notify} />
+      ) : (
+        <RegistrationCard
+          passes={passes}
+          draft={draft}
+          onDraftChange={setDraft}
+          onClaimed={handleClaimed}
+          autoFocus={focusForm}
+        />
+      )}
 
       <Toast toast={toast} />
     </section>
