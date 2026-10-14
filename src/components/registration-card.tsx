@@ -188,9 +188,7 @@ export function RegistrationCard({
                   >
                     <CircleX aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-rose-300" />
                     <span>
-                      <strong className="font-semibold text-white">“{claim.character}” is already taken!</strong>{" "}
-                      Claimed by {claim.guestName} ({claim.movie}, ticket{" "}
-                      <span className="font-mono text-xs">{claim.ticketId}</span>). Please choose another character so
+                      <strong className="font-semibold text-white">“{claim.character}” is already taken!</strong>{" "} Please choose another character so
                       no two guests match.
                     </span>
                   </p>
